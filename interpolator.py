@@ -133,22 +133,22 @@ class Interpolator:
             b: Exponential rate parameter (default: (num_points - 1) * 0.16)
                 - Higher b: Slower decay (more gradual)
                 - Lower b: Faster decay (more concentration at start)
-                Must be positive and non-zero
+                Must be non-zero (can be positive or negative)
         
         Returns:
             torch.Tensor: Tensor of shape (num_points,) containing interpolated values
                          First value is start, last value is end
         
         Raises:
-            ValueError: If b is not positive
+            ValueError: If b is zero
         """
         if b is None:
             b = max(1.0, float(self.num_points - 1)) * 0.16
         else:
             b = float(b)
         
-        if b <= 0:
-            raise ValueError("Exponential rate parameter 'b' must be positive")
+        if b == 0:
+            raise ValueError("Exponential rate parameter 'b' must be non-zero")
         
         indices = torch.arange(self.num_points, dtype=self.dtype)
         max_index = torch.tensor(
@@ -177,7 +177,7 @@ class Interpolator:
         Args:
             rho: Rho parameter controlling the curve shape (default: 7)
                 - Higher rho: Different curvature
-                Must be positive and non-zero
+                Must be non-zero (can be positive or negative)
             include_zero: If True, replaces the last point with zero (default: False)
         
         Returns:

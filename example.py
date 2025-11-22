@@ -78,8 +78,8 @@ def example_exponential_multiple_params():
     # Create an interpolator instance with fixed start and end
     interp = Interpolator(start=0.0, end=100.0, num_points=50, dtype=torch.float64)
     
-    # Test different exponential rate values (only positive)
-    b_values = [5, 10, 20, 50]
+    # Test different exponential rate values (including negative)
+    b_values = [-30, -20, -10, -5, 5, 10, 20, 50]
     
     # Plot
     plt.figure(figsize=(10, 6))
@@ -178,6 +178,75 @@ def example_all_methods_descending():
     plt.close()
 
 
+def example_hyperparameter_settings():
+    """Example 6: Interpolation with hyperparameter settings from notebook"""
+    print("\n" + "=" * 60)
+    print("Example 6: Hyperparameter Settings Comparison")
+    print("=" * 60)
+    print("Generating plot...")
+    
+    # Parameters from hyperparameter_settings.ipynb
+    num_steps = 180
+    sigma_min = 0.002
+    sigma_max = 80
+    rho = 7
+    p = 3
+    b = num_steps * 0.16  # 28.8
+    
+    # Create interpolator instances
+    interp_180 = Interpolator(
+        start=sigma_min,
+        end=sigma_max,
+        num_points=num_steps,
+        dtype=torch.float64
+    )
+    
+    interp_181 = Interpolator(
+        start=sigma_min,
+        end=sigma_max,
+        num_points=num_steps + 1,
+        dtype=torch.float64
+    )
+    
+    # Get interpolation results for each method
+    # Power and rho: 180 points
+    power_values = interp_180.power(p=p)
+    rho_values = interp_180.rho(rho=rho, include_zero=False)
+    
+    # Add zero at the end for rho (matching notebook's t_steps_new)
+    rho_values_with_zero = torch.cat([rho_values, torch.zeros_like(rho_values[:1])])
+    
+    # Exponential: 181 points (matching notebook's t_steps_exp)
+    exp_values = interp_181.exponential(b=b)
+    
+    # Linear: 180 points for comparison
+    linear_values = interp_180.linear()
+    
+    # Plot comparison
+    plt.figure(figsize=(12, 7))
+    
+    plt.plot(linear_values.numpy(), label='Linear (180 points)', linewidth=2)
+    plt.plot(power_values.numpy(), label=f'Power p={p} (180 points)', linewidth=2)
+    plt.plot(exp_values.numpy(), label=f'Exponential b={b:.1f} (181 points)', linewidth=2)
+    plt.plot(rho_values_with_zero.numpy(), label=f'Rho rho={rho} (181 points, with zero)', linewidth=2)
+    
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title(
+        f'Hyperparameter Settings Comparison\n'
+        f'(sigma_min={sigma_min}, sigma_max={sigma_max}, num_steps={num_steps})',
+        fontsize=14
+    )
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3)
+    plt.yscale('log')  # Use log scale for better visualization with large range
+    
+    plt.tight_layout()
+    plt.savefig('hyperparameter_settings_comparison.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'hyperparameter_settings_comparison.png'")
+    plt.close()
+
+
 if __name__ == "__main__":
     # Run all examples
     print("\n" + "=" * 60)
@@ -190,6 +259,7 @@ if __name__ == "__main__":
         example_exponential_multiple_params()
         example_all_methods_ascending()
         example_all_methods_descending()
+        example_hyperparameter_settings()
         
         print("\n" + "=" * 60)
         print("All examples completed successfully!")
@@ -200,6 +270,7 @@ if __name__ == "__main__":
         print("  - exponential_interpolation_multiple_params.png")
         print("  - all_methods_comparison_ascending.png")
         print("  - all_methods_comparison_descending.png")
+        print("  - hyperparameter_settings_comparison.png")
         print("=" * 60)
         
     except Exception as e:
