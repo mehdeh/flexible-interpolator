@@ -228,126 +228,31 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 - Score-based generative models
 - Advanced scheduling strategies
 
-## Examples
+## Comparison
 
-### Example 1: Basic Comparison
+### All Methods Comparison (Ascending)
 
-```python
-from interpolator import Interpolator
-import matplotlib.pyplot as plt
+When start < end, all methods interpolate from the lower value to the higher value.
 
-interp = Interpolator(start=0.002, end=80.0, num_points=180)
-
-linear = interp.linear()
-power = interp.power(p=3)
-exponential = interp.exponential()
-rho = interp.rho(rho=7)
-
-plt.plot(linear.numpy(), label='Linear')
-plt.plot(power.numpy(), label='Power')
-plt.plot(exponential.numpy(), label='Exponential')
-plt.plot(rho.numpy(), label='Rho')
-plt.legend()
-plt.show()
-```
-
-### Example 2: All Methods Comparison (Ascending)
-
-When start < end, all methods interpolate from the lower value to the higher value:
-
-```python
-from interpolator import Interpolator
-from plotting import plot_multiple_methods
-
-interp = Interpolator(start=20.0, end=80.0, num_points=50)
-
-results = {
-    "linear": interp.linear(),
-    "power (p=3)": interp.power(p=3),
-    "exponential (b=15)": interp.exponential(b=15)
-}
-
-plot_multiple_methods(
-    results=results,
-    start=20.0,
-    end=80.0,
-    num_points=50,
-    output_path="comparison_ascending.png"
-)
-```
+**Settings:**
+- Start: 20.0
+- End: 80.0
+- Number of points: 50
+- Methods: Linear, Power (p=3), Exponential (b=15)
 
 ![All Methods Comparison - Ascending](docs/all_methods_comparison_ascending.png)
 
-### Example 3: All Methods Comparison (Descending)
+### All Methods Comparison (Descending)
 
-When start > end, all methods interpolate from the higher value to the lower value:
+When start > end, all methods interpolate from the higher value to the lower value.
 
-```python
-from interpolator import Interpolator
-from plotting import plot_multiple_methods
-
-interp = Interpolator(start=80.0, end=20.0, num_points=50)
-
-results = {
-    "linear": interp.linear(),
-    "power (p=3)": interp.power(p=3),
-    "exponential (b=15)": interp.exponential(b=15)
-}
-
-plot_multiple_methods(
-    results=results,
-    start=80.0,
-    end=20.0,
-    num_points=50,
-    output_path="comparison_descending.png"
-)
-```
+**Settings:**
+- Start: 80.0
+- End: 20.0
+- Number of points: 50
+- Methods: Linear, Power (p=3), Exponential (b=15)
 
 ![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
-
-### Example 4: Diffusion Model Noise Scheduling
-
-```python
-from interpolator import Interpolator
-
-# Typical diffusion model parameters
-sigma_min = 0.002
-sigma_max = 80.0
-num_points = 180
-
-interp = Interpolator(start=sigma_min, end=sigma_max, num_points=num_points)
-
-# Get different scheduling schemes
-schedules = {
-    'linear': interp.linear(),
-    'power': interp.power(p=3),
-    'exponential': interp.exponential(b=num_points * 0.16),
-    'rho': interp.rho(rho=7)
-}
-
-# Use in your diffusion model
-for name, schedule in schedules.items():
-    print(f"{name} schedule: {schedule.shape}")
-```
-
-### Example 5: Parameter Tuning
-
-```python
-# Test different parameters
-interp = Interpolator(start=0.0, end=1.0, num_points=50)
-
-# Different power values
-for p in [1, 2, 3, 5]:
-    values = interp.power(p=p)
-    print(f"p={p}: mid-point = {values[25]:.4f}")
-
-# Different exponential rates
-for b in [5, 10, 20, 50]:
-    values = interp.exponential(b=b)
-    print(f"b={b}: mid-point = {values[25]:.4f}")
-```
-
-See `example.py` for more comprehensive examples.
 
 ## API Reference
 
