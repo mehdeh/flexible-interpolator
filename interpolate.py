@@ -35,8 +35,20 @@ def generate_filename(
         Generated filename string
     """
     def format_number(num: float) -> str:
-        """Format number for filename, replacing dots with 'p' and dashes with 'neg'."""
-        num_str = str(num)
+        """
+        Format number for filename.
+        
+        - Integers (e.g., 0.0, 10.0) are displayed as integers (0, 10)
+        - Decimals (e.g., 0.002) have dots replaced with 'p' (0p002)
+        - Negative numbers have dashes replaced with 'neg'
+        """
+        # Check if number is effectively an integer
+        if num == int(num):
+            num_str = str(int(num))
+        else:
+            num_str = str(num)
+        
+        # Replace dots with 'p' and dashes with 'neg'
         return num_str.replace(".", "p").replace("-", "neg")
     
     # Base filename components
