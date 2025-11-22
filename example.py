@@ -8,6 +8,7 @@ interpolation methods and scenarios.
 import torch
 import matplotlib.pyplot as plt
 from interpolator import Interpolator
+from plotting import plot_interpolation, plot_multiple_methods
 
 
 def example_linear():
@@ -23,18 +24,16 @@ def example_linear():
     # Get linear interpolation
     linear_values = interp.linear()
     
-    # Plot
-    plt.figure(figsize=(10, 6))
-    plt.plot(linear_values.numpy(), label='Linear', linewidth=2, marker='o', markersize=4)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value', fontsize=12)
-    plt.title('Linear Interpolation (start=0.0, end=100.0, num_points=50)', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    plt.tight_layout()
-    plt.savefig('linear_interpolation.png', dpi=150, bbox_inches='tight')
+    # Plot using plotting module
+    plot_interpolation(
+        values=linear_values,
+        method="linear",
+        start=0.0,
+        end=100.0,
+        num_points=50,
+        output_path='linear_interpolation.png'
+    )
     print("Plot saved as 'linear_interpolation.png'")
-    plt.close()
 
 
 def example_power_multiple_params():
@@ -122,22 +121,20 @@ def example_all_methods_ascending():
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
     
-    # Plot comparison
-    plt.figure(figsize=(10, 6))
-    
-    plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
-    plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
-    plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=20.0, end=80.0, num_points=50)', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('all_methods_comparison_ascending.png', dpi=150, bbox_inches='tight')
+    # Plot comparison using plotting module
+    results = {
+        "linear": linear_values,
+        "power (p=3)": power_values,
+        "exponential (b=15)": exp_values
+    }
+    plot_multiple_methods(
+        results=results,
+        start=20.0,
+        end=80.0,
+        num_points=50,
+        output_path='all_methods_comparison_ascending.png'
+    )
     print("Plot saved as 'all_methods_comparison_ascending.png'")
-    plt.close()
 
 
 def example_all_methods_descending():
@@ -160,22 +157,20 @@ def example_all_methods_descending():
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
     
-    # Plot comparison
-    plt.figure(figsize=(10, 6))
-    
-    plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
-    plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
-    plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=80.0, end=20.0, num_points=50)', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig('all_methods_comparison_descending.png', dpi=150, bbox_inches='tight')
+    # Plot comparison using plotting module
+    results = {
+        "linear": linear_values,
+        "power (p=3)": power_values,
+        "exponential (b=15)": exp_values
+    }
+    plot_multiple_methods(
+        results=results,
+        start=80.0,
+        end=20.0,
+        num_points=50,
+        output_path='all_methods_comparison_descending.png'
+    )
     print("Plot saved as 'all_methods_comparison_descending.png'")
-    plt.close()
 
 
 if __name__ == "__main__":
