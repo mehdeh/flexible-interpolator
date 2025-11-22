@@ -47,31 +47,18 @@ def example_power_multiple_params():
     # Create an interpolator instance with fixed start and end
     interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
     
-    # Test different power values (including negative)
-    p_values = [-2, -1, 1, 2, 3, 5]
+    # Test different power values (only positive)
+    p_values = [1, 2, 3, 5, 7, 10]
     
     # Plot
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(10, 6))
     
-    # Linear scale plot
-    plt.subplot(2, 1, 1)
     for p in p_values:
         power_values = interp.power(p=p)
         plt.plot(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
     plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
-    plt.legend(fontsize=10)
-    plt.grid(True, alpha=0.3)
-    
-    # Log scale plot for better visualization
-    plt.subplot(2, 1, 2)
-    for p in p_values:
-        power_values = interp.power(p=p)
-        plt.semilogy(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value (Log Scale)', fontsize=12)
-    plt.title('Power Interpolation with Different Parameters (Log Scale)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -92,14 +79,11 @@ def example_exponential_multiple_params():
     interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
     
     # Test different exponential rate values (including negative)
-    # Note: For exponential, negative b values might produce interesting results
     b_values = [-10, -5, 5, 10, 20, 50]
     
     # Plot
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(10, 6))
     
-    # Linear scale plot
-    plt.subplot(2, 1, 1)
     for b in b_values:
         try:
             exp_values = interp.exponential(b=b)
@@ -109,20 +93,6 @@ def example_exponential_multiple_params():
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
     plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
-    plt.legend(fontsize=10)
-    plt.grid(True, alpha=0.3)
-    
-    # Log scale plot for better visualization
-    plt.subplot(2, 1, 2)
-    for b in b_values:
-        try:
-            exp_values = interp.exponential(b=b)
-            plt.semilogy(exp_values.numpy(), label=f'Exponential (b={b})', linewidth=2)
-        except Exception:
-            pass
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value (Log Scale)', fontsize=12)
-    plt.title('Exponential Interpolation with Different Parameters (Log Scale)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -153,27 +123,14 @@ def example_all_methods_ascending():
     exp_values = interp.exponential(b=15)
     
     # Plot comparison
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(10, 6))
     
-    # Linear scale plot
-    plt.subplot(2, 1, 1)
     plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
     plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
     plt.title('Comparison of All Interpolation Methods (start=0.002, end=80.0)', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
-    # Log scale plot for better visualization
-    plt.subplot(2, 1, 2)
-    plt.semilogy(linear_values.numpy(), label='Linear', linewidth=2)
-    plt.semilogy(power_values.numpy(), label='Power (p=3)', linewidth=2)
-    plt.semilogy(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value (Log Scale)', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (Log Scale)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
@@ -204,27 +161,14 @@ def example_all_methods_descending():
     exp_values = interp.exponential(b=15)
     
     # Plot comparison
-    plt.figure(figsize=(12, 7))
+    plt.figure(figsize=(10, 6))
     
-    # Linear scale plot
-    plt.subplot(2, 1, 1)
     plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
     plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
     plt.title('Comparison of All Interpolation Methods (start=80.0, end=0.002)', fontsize=14)
-    plt.legend(fontsize=11)
-    plt.grid(True, alpha=0.3)
-    
-    # Log scale plot for better visualization
-    plt.subplot(2, 1, 2)
-    plt.semilogy(linear_values.numpy(), label='Linear', linewidth=2)
-    plt.semilogy(power_values.numpy(), label='Power (p=3)', linewidth=2)
-    plt.semilogy(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
-    plt.xlabel('Step Index', fontsize=12)
-    plt.ylabel('Value (Log Scale)', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (Log Scale)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
