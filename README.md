@@ -248,6 +248,8 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 - Score-based generative models
 - Advanced scheduling strategies
 
+![Rho Interpolation](docs/rho_interpolation.png)
+
 ## Comparison
 
 ### All Methods Comparison (Ascending)
@@ -258,7 +260,7 @@ When start < end, all methods interpolate from the lower value to the higher val
 - Start: 20.0
 - End: 80.0
 - Number of points: 50
-- Methods: Linear, Power (p=3), Exponential (b=15)
+- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7)
 
 ![All Methods Comparison - Ascending](docs/all_methods_comparison_ascending.png)
 
@@ -270,7 +272,7 @@ When start > end, all methods interpolate from the higher value to the lower val
 - Start: 80.0
 - End: 20.0
 - Number of points: 50
-- Methods: Linear, Power (p=3), Exponential (b=15)
+- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7)
 
 ![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
 
@@ -304,6 +306,7 @@ flexible-interpolator/
 │   ├── linear_interpolation.png
 │   ├── power_interpolation_multiple_params.png
 │   ├── exponential_interpolation_multiple_params.png
+│   ├── rho_interpolation.png
 │   ├── all_methods_comparison_ascending.png
 │   └── all_methods_comparison_descending.png
 └── outputs/            # Generated output files (gitignored)

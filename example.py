@@ -109,10 +109,38 @@ def example_exponential_multiple_params():
     plt.close()
 
 
-def example_all_methods_ascending():
-    """Example 4: Comparison of all three methods (start < end)"""
+def example_rho():
+    """Example 4: Rho-based interpolation"""
     print("\n" + "=" * 60)
-    print("Example 4: All Methods Comparison (Ascending: start < end)")
+    print("Example 4: Rho-based Interpolation")
+    print("=" * 60)
+    print("Generating plot...")
+    
+    # Create an interpolator instance
+    interp = Interpolator(start=0.002, end=80.0, num_points=180, dtype=torch.float64)
+    
+    # Get rho interpolation
+    rho_values = interp.rho(rho=7, include_zero=False)
+    
+    # Plot using plotting module
+    output_path = os.path.join(OUTPUT_DIR, 'rho_interpolation.png')
+    plot_interpolation(
+        values=rho_values,
+        method="rho",
+        start=0.002,
+        end=80.0,
+        num_points=180,
+        output_path=output_path,
+        rho=7,
+        include_zero=False
+    )
+    print(f"Plot saved as '{output_path}'")
+
+
+def example_all_methods_ascending():
+    """Example 5: Comparison of all four methods (start < end)"""
+    print("\n" + "=" * 60)
+    print("Example 5: All Methods Comparison (Ascending: start < end)")
     print("=" * 60)
     print("Generating plot...")
     
@@ -128,12 +156,14 @@ def example_all_methods_ascending():
     linear_values = interp.linear()
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
+    rho_values = interp.rho(rho=7, include_zero=False)
     
     # Plot comparison using plotting module
     results = {
         "linear": linear_values,
         "power (p=3)": power_values,
-        "exponential (b=15)": exp_values
+        "exponential (b=15)": exp_values,
+        "rho (rho=7)": rho_values
     }
     output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')
     plot_multiple_methods(
@@ -147,9 +177,9 @@ def example_all_methods_ascending():
 
 
 def example_all_methods_descending():
-    """Example 5: Comparison of all three methods (start > end)"""
+    """Example 6: Comparison of all four methods (start > end)"""
     print("\n" + "=" * 60)
-    print("Example 5: All Methods Comparison (Descending: start > end)")
+    print("Example 6: All Methods Comparison (Descending: start > end)")
     print("=" * 60)
     print("Generating plot...")
     
@@ -165,12 +195,14 @@ def example_all_methods_descending():
     linear_values = interp.linear()
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
+    rho_values = interp.rho(rho=7, include_zero=False)
     
     # Plot comparison using plotting module
     results = {
         "linear": linear_values,
         "power (p=3)": power_values,
-        "exponential (b=15)": exp_values
+        "exponential (b=15)": exp_values,
+        "rho (rho=7)": rho_values
     }
     output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')
     plot_multiple_methods(
@@ -193,6 +225,7 @@ if __name__ == "__main__":
         example_linear()
         example_power_multiple_params()
         example_exponential_multiple_params()
+        example_rho()
         example_all_methods_ascending()
         example_all_methods_descending()
         
@@ -203,6 +236,7 @@ if __name__ == "__main__":
         print(f"  - {os.path.join(OUTPUT_DIR, 'linear_interpolation.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'power_interpolation_multiple_params.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'exponential_interpolation_multiple_params.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'rho_interpolation.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')}")
         print("=" * 60)
