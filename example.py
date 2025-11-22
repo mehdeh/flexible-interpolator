@@ -5,10 +5,15 @@ This script demonstrates various ways to use the Interpolator for different
 interpolation methods and scenarios.
 """
 
+import os
 import torch
 import matplotlib.pyplot as plt
 from interpolator import Interpolator
 from plotting import plot_interpolation, plot_multiple_methods
+
+# Create outputs directory if it doesn't exist
+OUTPUT_DIR = 'outputs'
+os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 
 def example_linear():
@@ -25,15 +30,16 @@ def example_linear():
     linear_values = interp.linear()
     
     # Plot using plotting module
+    output_path = os.path.join(OUTPUT_DIR, 'linear_interpolation.png')
     plot_interpolation(
         values=linear_values,
         method="linear",
         start=0.0,
         end=100.0,
         num_points=50,
-        output_path='linear_interpolation.png'
+        output_path=output_path
     )
-    print("Plot saved as 'linear_interpolation.png'")
+    print(f"Plot saved as '{output_path}'")
 
 
 def example_power_multiple_params():
@@ -62,8 +68,9 @@ def example_power_multiple_params():
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('power_interpolation_multiple_params.png', dpi=150, bbox_inches='tight')
-    print("Plot saved as 'power_interpolation_multiple_params.png'")
+    output_path = os.path.join(OUTPUT_DIR, 'power_interpolation_multiple_params.png')
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    print(f"Plot saved as '{output_path}'")
     plt.close()
 
 
@@ -96,8 +103,9 @@ def example_exponential_multiple_params():
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('exponential_interpolation_multiple_params.png', dpi=150, bbox_inches='tight')
-    print("Plot saved as 'exponential_interpolation_multiple_params.png'")
+    output_path = os.path.join(OUTPUT_DIR, 'exponential_interpolation_multiple_params.png')
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
+    print(f"Plot saved as '{output_path}'")
     plt.close()
 
 
@@ -127,14 +135,15 @@ def example_all_methods_ascending():
         "power (p=3)": power_values,
         "exponential (b=15)": exp_values
     }
+    output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')
     plot_multiple_methods(
         results=results,
         start=20.0,
         end=80.0,
         num_points=50,
-        output_path='all_methods_comparison_ascending.png'
+        output_path=output_path
     )
-    print("Plot saved as 'all_methods_comparison_ascending.png'")
+    print(f"Plot saved as '{output_path}'")
 
 
 def example_all_methods_descending():
@@ -163,14 +172,15 @@ def example_all_methods_descending():
         "power (p=3)": power_values,
         "exponential (b=15)": exp_values
     }
+    output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')
     plot_multiple_methods(
         results=results,
         start=80.0,
         end=20.0,
         num_points=50,
-        output_path='all_methods_comparison_descending.png'
+        output_path=output_path
     )
-    print("Plot saved as 'all_methods_comparison_descending.png'")
+    print(f"Plot saved as '{output_path}'")
 
 
 if __name__ == "__main__":
@@ -189,12 +199,12 @@ if __name__ == "__main__":
         print("\n" + "=" * 60)
         print("All examples completed successfully!")
         print("=" * 60)
-        print("\nGenerated files:")
-        print("  - linear_interpolation.png")
-        print("  - power_interpolation_multiple_params.png")
-        print("  - exponential_interpolation_multiple_params.png")
-        print("  - all_methods_comparison_ascending.png")
-        print("  - all_methods_comparison_descending.png")
+        print("\nGenerated files (saved in 'outputs' folder):")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'linear_interpolation.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'power_interpolation_multiple_params.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'exponential_interpolation_multiple_params.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')}")
         print("=" * 60)
         
     except Exception as e:
