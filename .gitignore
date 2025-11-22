@@ -38,10 +38,11 @@ ENV/
 *.ipynb_checkpoints/
 
 # Output files
-*.png
+outputs/
 *.pdf
 *.svg
 *.jpg
+*.png
 
 # OS
 .DS_Store

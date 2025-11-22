@@ -260,11 +260,15 @@ def main() -> int:
         # Perform interpolation
         values = interp.interpolate(method=args.method, **method_kwargs)
         
+        # Create outputs directory if it doesn't exist
+        outputs_dir = "outputs"
+        os.makedirs(outputs_dir, exist_ok=True)
+        
         # Generate output filename
         if args.output:
-            output_path = args.output
+            filename = os.path.basename(args.output)
         else:
-            output_path = generate_filename(
+            filename = generate_filename(
                 method=args.method,
                 start=args.start,
                 end=args.end,
@@ -272,8 +276,8 @@ def main() -> int:
                 **method_kwargs
             )
         
-        # Ensure output path is in current directory
-        output_path = os.path.basename(output_path)
+        # Construct full output path in outputs directory
+        output_path = os.path.join(outputs_dir, filename)
         
         # Generate plot
         plot_interpolation(
