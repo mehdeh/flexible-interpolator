@@ -58,7 +58,7 @@ def example_power_multiple_params():
         plt.plot(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
+    plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0, num_steps=50)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -79,7 +79,7 @@ def example_exponential_multiple_params():
     interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
     
     # Test different exponential rate values (including negative)
-    b_values = [-10, -5, 5, 10, 20, 50]
+    b_values = [-30, -20, -10, -5, 5, 10, 20, 50]
     
     # Plot
     plt.figure(figsize=(10, 6))
@@ -92,7 +92,7 @@ def example_exponential_multiple_params():
             print(f"  Note: Skipped b={b} due to error: {e}")
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
+    plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0, num_steps=50)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -113,7 +113,7 @@ def example_all_methods_ascending():
     interp = Interpolator(
         start=0.002,
         end=80.0,
-        num_steps=100,
+        num_steps=50,
         dtype=torch.float64
     )
     
@@ -130,7 +130,7 @@ def example_all_methods_ascending():
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=0.002, end=80.0)', fontsize=14)
+    plt.title('Comparison of All Interpolation Methods (start=0.002, end=80.0, num_steps=50)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
@@ -151,7 +151,7 @@ def example_all_methods_descending():
     interp = Interpolator(
         start=80.0,
         end=0.002,
-        num_steps=100,
+        num_steps=50,
         dtype=torch.float64
     )
     
@@ -168,7 +168,7 @@ def example_all_methods_descending():
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=80.0, end=0.002)', fontsize=14)
+    plt.title('Comparison of All Interpolation Methods (start=80.0, end=0.002, num_steps=50)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
