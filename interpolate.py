@@ -77,16 +77,16 @@ def parse_arguments() -> argparse.Namespace:
         epilog="""
 Examples:
   # Linear interpolation
-  python cli.py --method linear --start 0.0 --end 100.0 --num-points 50
+  python interpolate.py --method linear --start 0.0 --end 100.0 --num-points 50
   
   # Power interpolation with custom parameter
-  python cli.py --method power --start 0.0 --end 100.0 --num-points 50 --p 5
+  python interpolate.py --method power --start 0.0 --end 100.0 --num-points 50 --p 5
   
   # Exponential interpolation
-  python cli.py --method exponential --start 0.0 --end 100.0 --num-points 50 --b 15
+  python interpolate.py --method exponential --start 0.0 --end 100.0 --num-points 50 --b 15
   
   # Rho interpolation
-  python cli.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
+  python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
         """
     )
     
