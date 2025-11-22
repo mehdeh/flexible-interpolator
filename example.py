@@ -109,32 +109,39 @@ def example_exponential_multiple_params():
     plt.close()
 
 
-def example_rho():
-    """Example 4: Rho-based interpolation"""
+def example_rho_multiple_params():
+    """Example 4: Rho-based interpolation with multiple parameter values"""
     print("\n" + "=" * 60)
-    print("Example 4: Rho-based Interpolation")
+    print("Example 4: Rho-based Interpolation with Multiple Parameters")
     print("=" * 60)
     print("Generating plot...")
     
-    # Create an interpolator instance
+    # Create an interpolator instance with fixed start and end
     interp = Interpolator(start=0.002, end=80.0, num_points=180, dtype=torch.float64)
     
-    # Get rho interpolation
-    rho_values = interp.rho(rho=7, include_zero=False)
+    # Test different rho values (only positive)
+    rho_values = [1, 2, 3, 5, 7, 10]
     
-    # Plot using plotting module
-    output_path = os.path.join(OUTPUT_DIR, 'rho_interpolation.png')
-    plot_interpolation(
-        values=rho_values,
-        method="rho",
-        start=0.002,
-        end=80.0,
-        num_points=180,
-        output_path=output_path,
-        rho=7,
-        include_zero=False
-    )
+    # Plot
+    plt.figure(figsize=(10, 6))
+    
+    for rho in rho_values:
+        try:
+            rho_interp_values = interp.rho(rho=rho, include_zero=False)
+            plt.plot(rho_interp_values.numpy(), label=f'Rho (rho={rho})', linewidth=2)
+        except Exception as e:
+            print(f"  Note: Skipped rho={rho} due to error: {e}")
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Rho Interpolation with Different Parameters (start=0.002, end=80.0, num_points=180)', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    output_path = os.path.join(OUTPUT_DIR, 'rho_interpolation_multiple_params.png')
+    plt.savefig(output_path, dpi=150, bbox_inches='tight')
     print(f"Plot saved as '{output_path}'")
+    plt.close()
 
 
 def example_all_methods_ascending():
@@ -225,7 +232,7 @@ if __name__ == "__main__":
         example_linear()
         example_power_multiple_params()
         example_exponential_multiple_params()
-        example_rho()
+        example_rho_multiple_params()
         example_all_methods_ascending()
         example_all_methods_descending()
         
@@ -236,7 +243,7 @@ if __name__ == "__main__":
         print(f"  - {os.path.join(OUTPUT_DIR, 'linear_interpolation.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'power_interpolation_multiple_params.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'exponential_interpolation_multiple_params.png')}")
-        print(f"  - {os.path.join(OUTPUT_DIR, 'rho_interpolation.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'rho_interpolation_multiple_params.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')}")
         print("=" * 60)
