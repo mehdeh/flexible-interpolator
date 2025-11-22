@@ -11,9 +11,10 @@ This code is provided freely for public use without any license restrictions.
 - 🎯 **Multiple Interpolation Methods**: Linear, Power-based, Exponential, and Rho-based
 - 🚀 **Easy to Use**: Simple API with both class-based and function-based interfaces
 - 🔧 **Flexible**: Adjustable parameters for fine-tuning each method
-- 📊 **Visualization Support**: Built-in plotting capabilities
+- 📊 **Visualization Support**: Built-in plotting capabilities and CLI tool
 - 🎨 **PyTorch Compatible**: Native PyTorch tensor support
 - 📦 **Lightweight**: Minimal dependencies
+- 💻 **Command-Line Interface**: Generate plots directly from the command line
 
 ## Installation
 
@@ -30,6 +31,7 @@ pip install -r requirements.txt
 ```
 
 Then you can directly import and use the interpolator in your Python scripts:
+
 ```python
 from interpolator import Interpolator
 ```
@@ -42,7 +44,7 @@ from interpolator import Interpolator
 from interpolator import Interpolator
 
 # Create an interpolator instance
-interp = Interpolator(start=0.0, end=1.0, num_steps=10)
+interp = Interpolator(start=0.0, end=1.0, num_points=10)
 
 # Linear interpolation
 linear_values = interp.linear()
@@ -61,7 +63,7 @@ rho_values = interp.rho(rho=7)
 
 ```python
 # All methods through one interface
-interp = Interpolator(start=0.002, end=80.0, num_steps=180)
+interp = Interpolator(start=0.002, end=80.0, num_points=180)
 
 linear = interp.interpolate("linear")
 power = interp.interpolate("power", p=3)
@@ -75,13 +77,13 @@ rho = interp.interpolate("rho", rho=7, include_zero=False)
 from interpolator import interpolate
 
 # Quick interpolation without creating a class
-values = interpolate(start=0, end=100, num_steps=5, method="linear")
+values = interpolate(start=0, end=100, num_points=5, method="linear")
 ```
 
 ### Get All Methods at Once
 
 ```python
-interp = Interpolator(start=0.002, end=80.0, num_steps=180)
+interp = Interpolator(start=0.002, end=80.0, num_points=180)
 all_results = interp.get_all_methods(p=3, rho=7, include_zero=False)
 
 # Access results
@@ -89,6 +91,24 @@ linear = all_results['linear']
 power = all_results['power']
 exponential = all_results['exponential']
 rho = all_results['rho']
+```
+
+### Command-Line Interface
+
+The library includes a CLI tool for generating plots directly:
+
+```bash
+# Linear interpolation
+python interpolate.py --method linear --start 0.0 --end 100.0 --num-points 50
+
+# Power interpolation with custom parameter
+python interpolate.py --method power --start 0.0 --end 100.0 --num-points 50 --p 5
+
+# Exponential interpolation
+python interpolate.py --method exponential --start 0.0 --end 100.0 --num-points 50 --b 15
+
+# Rho interpolation
+python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
 ```
 
 ## Interpolation Methods
@@ -103,7 +123,7 @@ values = interp.linear()
 
 **Mathematical Formula:**
 
-For output length $n$ (num_steps), the interpolated values are:
+For output length $n$ (num_points), the interpolated values are:
 
 $$t_i = \text{start} + (\text{end} - \text{start}) \cdot \frac{i}{n-1}$$
 
@@ -113,6 +133,8 @@ where $i \in \{0, 1, 2, \ldots, n-1\}$ and $n > 1$. When $n = 1$, $t_0 = \text{s
 - Uniform distribution
 - Equal step sizes
 - Straight line from start to end
+
+![Linear Interpolation](docs/linear_interpolation.png)
 
 ### 2. Power-based Interpolation
 
@@ -124,7 +146,7 @@ values = interp.power(p=3)
 
 **Mathematical Formula:**
 
-For output length $n$ (num_steps) and power parameter $p$:
+For output length $n$ (num_points) and power parameter $p$:
 
 $$t_i = \text{start} + (\text{end} - \text{start}) \cdot \left(1 - \left|\frac{i}{n-1} - 1\right|\right)^p$$
 
@@ -136,10 +158,13 @@ This formula creates a symmetric curve that concentrates more points near the st
 - `p` (float): Power parameter controlling curve shape
   - Higher `p`: More concentration at ends
   - Lower `p`: More uniform distribution
+  - Must be positive
 
 **Use Cases:**
 - When you need more samples near start/end
 - Non-uniform sampling strategies
+
+![Power Interpolation](docs/power_interpolation_multiple_params.png)
 
 ### 3. Exponential Interpolation
 
@@ -151,25 +176,28 @@ values = interp.exponential(b=28.8)
 
 **Mathematical Formula:**
 
-For output length $n$ (num_steps) and exponential rate parameter $b$:
+For output length $n$ (num_points) and exponential rate parameter $b$:
 
 $$t_i = \text{start} + (\text{end} - \text{start}) \cdot \left(1 - \frac{\exp\left(\frac{n-1 - i}{b}\right) - 1}{\exp\left(\frac{n-1}{b}\right) - 1}\right)$$
 
-where $i \in \{0, 1, 2, \ldots, n-1\}$, $n > 1$, and $b > 0$. When $n = 1$, $t_0 = \text{start}$.
+where $i \in \{0, 1, 2, \ldots, n-1\}$, $n > 1$, and $b \neq 0$. When $n = 1$, $t_0 = \text{start}$.
 
 The default value for $b$ is $(n-1) \cdot 0.16$.
 
 This formula creates an exponential decay that concentrates more points near the start value, with the spacing increasing as we approach the end.
 
 **Parameters:**
-- `b` (float): Exponential rate parameter (default: `(num_steps - 1) * 0.16`)
+- `b` (float): Exponential rate parameter (default: `(num_points - 1) * 0.16`)
   - Higher `b`: Slower decay, more gradual transition
   - Lower `b`: Faster decay, more concentration at start
+  - Must be non-zero (can be positive or negative)
 
 **Use Cases:**
 - Diffusion model noise scheduling
 - Learning rate scheduling
 - Annealing schedules
+
+![Exponential Interpolation](docs/exponential_interpolation_multiple_params.png)
 
 ### 4. Rho-based Interpolation
 
@@ -181,7 +209,7 @@ values = interp.rho(rho=7, include_zero=False)
 
 **Mathematical Formula:**
 
-For output length $n$ (num_steps) and rho parameter $\rho$:
+For output length $n$ (num_points) and rho parameter $\rho$:
 
 $$t_i = \left( \text{start}^{1/\rho} + \frac{i}{n-1} \cdot \left(\text{end}^{1/\rho} - \text{start}^{1/\rho}\right) \right)^\rho$$
 
@@ -191,7 +219,9 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 
 **Parameters:**
 - `rho` (float): Rho parameter controlling curve shape (default: 7)
+  - Must be positive and non-zero
 - `include_zero` (bool): If True, replaces the last point with zero (default: False)
+  - Requires both start and end to be non-negative
 
 **Use Cases:**
 - Diffusion model noise schedules
@@ -206,7 +236,7 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 from interpolator import Interpolator
 import matplotlib.pyplot as plt
 
-interp = Interpolator(start=0.002, end=80.0, num_steps=180)
+interp = Interpolator(start=0.002, end=80.0, num_points=180)
 
 linear = interp.linear()
 power = interp.power(p=3)
@@ -221,7 +251,61 @@ plt.legend()
 plt.show()
 ```
 
-### Example 2: Diffusion Model Noise Scheduling
+### Example 2: All Methods Comparison (Ascending)
+
+When start < end, all methods interpolate from the lower value to the higher value:
+
+```python
+from interpolator import Interpolator
+from plotting import plot_multiple_methods
+
+interp = Interpolator(start=20.0, end=80.0, num_points=50)
+
+results = {
+    "linear": interp.linear(),
+    "power (p=3)": interp.power(p=3),
+    "exponential (b=15)": interp.exponential(b=15)
+}
+
+plot_multiple_methods(
+    results=results,
+    start=20.0,
+    end=80.0,
+    num_points=50,
+    output_path="comparison_ascending.png"
+)
+```
+
+![All Methods Comparison - Ascending](docs/all_methods_comparison_ascending.png)
+
+### Example 3: All Methods Comparison (Descending)
+
+When start > end, all methods interpolate from the higher value to the lower value:
+
+```python
+from interpolator import Interpolator
+from plotting import plot_multiple_methods
+
+interp = Interpolator(start=80.0, end=20.0, num_points=50)
+
+results = {
+    "linear": interp.linear(),
+    "power (p=3)": interp.power(p=3),
+    "exponential (b=15)": interp.exponential(b=15)
+}
+
+plot_multiple_methods(
+    results=results,
+    start=80.0,
+    end=20.0,
+    num_points=50,
+    output_path="comparison_descending.png"
+)
+```
+
+![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
+
+### Example 4: Diffusion Model Noise Scheduling
 
 ```python
 from interpolator import Interpolator
@@ -229,15 +313,15 @@ from interpolator import Interpolator
 # Typical diffusion model parameters
 sigma_min = 0.002
 sigma_max = 80.0
-num_steps = 180
+num_points = 180
 
-interp = Interpolator(start=sigma_min, end=sigma_max, num_steps=num_steps)
+interp = Interpolator(start=sigma_min, end=sigma_max, num_points=num_points)
 
 # Get different scheduling schemes
 schedules = {
     'linear': interp.linear(),
     'power': interp.power(p=3),
-    'exponential': interp.exponential(b=num_steps * 0.16),
+    'exponential': interp.exponential(b=num_points * 0.16),
     'rho': interp.rho(rho=7)
 }
 
@@ -246,11 +330,11 @@ for name, schedule in schedules.items():
     print(f"{name} schedule: {schedule.shape}")
 ```
 
-### Example 3: Parameter Tuning
+### Example 5: Parameter Tuning
 
 ```python
 # Test different parameters
-interp = Interpolator(start=0.0, end=1.0, num_steps=50)
+interp = Interpolator(start=0.0, end=1.0, num_points=50)
 
 # Different power values
 for p in [1, 2, 3, 5]:
@@ -272,13 +356,13 @@ See `example.py` for more comprehensive examples.
 #### Constructor
 
 ```python
-Interpolator(start, end, num_steps, dtype=torch.float64)
+Interpolator(start, end, num_points, dtype=torch.float64)
 ```
 
 **Parameters:**
 - `start` (float): Starting value
 - `end` (float): Ending value
-- `num_steps` (int): Total number of output points (output length, must be >= 1)
+- `num_points` (int): Total number of output points (including start, end, and all intermediate points, must be >= 1)
 - `dtype` (torch.dtype): Output tensor dtype (default: torch.float64)
 
 #### Methods
@@ -293,17 +377,95 @@ Interpolator(start, end, num_steps, dtype=torch.float64)
 ### `interpolate()` Function
 
 ```python
-interpolate(start, end, num_steps, method="linear", dtype=torch.float64, **kwargs) -> torch.Tensor
+interpolate(start, end, num_points, method="linear", dtype=torch.float64, **kwargs) -> torch.Tensor
 ```
 
 Convenience function for quick interpolation without creating a class instance.
+
+### `plot_interpolation()` Function
+
+```python
+from plotting import plot_interpolation
+
+plot_interpolation(
+    values=torch.Tensor,
+    method=str,
+    start=float,
+    end=float,
+    num_points=int,
+    output_path=str,
+    title=None,
+    figsize=(10, 6),
+    dpi=150,
+    **kwargs
+)
+```
+
+Generate and save a plot for interpolation results.
+
+### `plot_multiple_methods()` Function
+
+```python
+from plotting import plot_multiple_methods
+
+plot_multiple_methods(
+    results=Dict[str, torch.Tensor],
+    start=float,
+    end=float,
+    num_points=int,
+    output_path=str,
+    title=None,
+    figsize=(10, 6),
+    dpi=150
+)
+```
+
+Generate and save a comparison plot for multiple interpolation methods.
+
+## Command-Line Interface
+
+The `interpolate.py` script provides a command-line interface for generating interpolation plots:
+
+```bash
+python interpolate.py --method METHOD --start START --end END --num-points N [OPTIONS]
+```
+
+**Required Arguments:**
+- `--method`: Interpolation method (`linear`, `power`, `exponential`, `rho`)
+- `--start`: Starting value for interpolation
+- `--end`: Ending value for interpolation
+- `--num-points`: Total number of output points
+
+**Optional Arguments:**
+- `--output`: Output filename (auto-generated if not provided)
+- `--p`: Power parameter for power method (default: 3)
+- `--b`: Exponential rate parameter for exponential method (default: auto-calculated)
+- `--rho`: Rho parameter for rho method (default: 7)
+- `--include-zero`: Include zero in rho method
+- `--dpi`: Resolution for output image (default: 150)
+
+**Examples:**
+
+```bash
+# Linear interpolation
+python interpolate.py --method linear --start 0.0 --end 100.0 --num-points 50
+
+# Power interpolation with custom parameter
+python interpolate.py --method power --start 0.0 --end 100.0 --num-points 50 --p 5
+
+# Exponential interpolation
+python interpolate.py --method exponential --start 0.0 --end 100.0 --num-points 50 --b 15
+
+# Rho interpolation
+python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
+```
 
 ## Requirements
 
 - Python 3.7+
 - PyTorch >= 1.9.0
 - NumPy >= 1.19.0
-- Matplotlib >= 3.3.0 (for visualization examples)
+- Matplotlib >= 3.3.0 (for visualization)
 
 ## Use Cases
 
@@ -314,6 +476,25 @@ Convenience function for quick interpolation without creating a class instance.
 - **Signal Processing**: Time-varying parameter generation
 - **Machine Learning**: Learning rate scheduling, temperature annealing
 
+## Project Structure
+
+```
+flexible-interpolator/
+├── interpolator.py      # Main interpolation library
+├── interpolate.py       # Command-line interface
+├── plotting.py          # Plotting utilities
+├── example.py           # Example usage scripts
+├── requirements.txt     # Dependencies
+├── README.md           # This file
+├── docs/               # Documentation images
+│   ├── linear_interpolation.png
+│   ├── power_interpolation_multiple_params.png
+│   ├── exponential_interpolation_multiple_params.png
+│   ├── all_methods_comparison_ascending.png
+│   └── all_methods_comparison_descending.png
+└── outputs/            # Generated output files (gitignored)
+```
+
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
@@ -322,13 +503,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This code is provided freely for public use without any license restrictions. Use it as you wish!
 
-
 ## Acknowledgments
 
 This library was inspired by interpolation schemes commonly used in diffusion models and score-based generative models.
 
-
 ## Support
 
 For issues, questions, or contributions, please open an issue on GitHub.
-

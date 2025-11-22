@@ -44,6 +44,13 @@ outputs/
 *.jpg
 *.png
 
+# Exceptions: Keep docs folder and its contents
+!docs/
+!docs/**/*.png
+!docs/**/*.jpg
+!docs/**/*.svg
+!docs/**/*.pdf
+
 # OS
 .DS_Store
 Thumbs.db
