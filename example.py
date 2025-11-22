@@ -18,7 +18,7 @@ def example_linear():
     print("Generating plot...")
     
     # Create an interpolator instance
-    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
+    interp = Interpolator(start=0.0, end=100.0, num_points=50, dtype=torch.float64)
     
     # Get linear interpolation
     linear_values = interp.linear()
@@ -28,7 +28,7 @@ def example_linear():
     plt.plot(linear_values.numpy(), label='Linear', linewidth=2, marker='o', markersize=4)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Linear Interpolation (start=0.0, end=100.0, num_steps=50)', fontsize=14)
+    plt.title('Linear Interpolation (start=0.0, end=100.0, num_points=50)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
@@ -45,7 +45,7 @@ def example_power_multiple_params():
     print("Generating plot...")
     
     # Create an interpolator instance with fixed start and end
-    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
+    interp = Interpolator(start=0.0, end=100.0, num_points=50, dtype=torch.float64)
     
     # Test different power values (only positive)
     p_values = [1, 2, 3, 5, 7, 10]
@@ -58,7 +58,7 @@ def example_power_multiple_params():
         plt.plot(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0, num_steps=50)', fontsize=14)
+    plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0, num_points=50)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -76,10 +76,10 @@ def example_exponential_multiple_params():
     print("Generating plot...")
     
     # Create an interpolator instance with fixed start and end
-    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
+    interp = Interpolator(start=0.0, end=100.0, num_points=50, dtype=torch.float64)
     
-    # Test different exponential rate values (including negative)
-    b_values = [-30, -20, -10, -5, 5, 10, 20, 50]
+    # Test different exponential rate values (only positive)
+    b_values = [5, 10, 20, 50]
     
     # Plot
     plt.figure(figsize=(10, 6))
@@ -92,7 +92,7 @@ def example_exponential_multiple_params():
             print(f"  Note: Skipped b={b} due to error: {e}")
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0, num_steps=50)', fontsize=14)
+    plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0, num_points=50)', fontsize=14)
     plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
@@ -113,7 +113,7 @@ def example_all_methods_ascending():
     interp = Interpolator(
         start=20.0,
         end=80.0,
-        num_steps=50,
+        num_points=50,
         dtype=torch.float64
     )
     
@@ -130,7 +130,7 @@ def example_all_methods_ascending():
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=20.0, end=80.0, num_steps=50)', fontsize=14)
+    plt.title('Comparison of All Interpolation Methods (start=20.0, end=80.0, num_points=50)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
@@ -151,7 +151,7 @@ def example_all_methods_descending():
     interp = Interpolator(
         start=80.0,
         end=20.0,
-        num_steps=50,
+        num_points=50,
         dtype=torch.float64
     )
     
@@ -168,7 +168,7 @@ def example_all_methods_descending():
     plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
     plt.xlabel('Step Index', fontsize=12)
     plt.ylabel('Value', fontsize=12)
-    plt.title('Comparison of All Interpolation Methods (start=80.0, end=20.0, num_steps=50)', fontsize=14)
+    plt.title('Comparison of All Interpolation Methods (start=80.0, end=20.0, num_points=50)', fontsize=14)
     plt.legend(fontsize=11)
     plt.grid(True, alpha=0.3)
     
