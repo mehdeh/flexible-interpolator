@@ -7,195 +7,231 @@ interpolation methods and scenarios.
 
 import torch
 import matplotlib.pyplot as plt
-from interpolator import Interpolator, interpolate
+from interpolator import Interpolator
 
 
-def example_1_basic_usage():
-    """Example 1: Basic usage with different methods"""
+def example_linear():
+    """Example 1: Linear interpolation"""
     print("=" * 60)
-    print("Example 1: Basic Usage")
-    print("=" * 60)
-    
-    # Create an interpolator instance
-    interp = Interpolator(start=0.0, end=1.0, num_steps=10)
-    
-    # Get linear interpolation
-    linear_values = interp.linear()
-    print(f"\nLinear interpolation (first 5 and last 5 values):")
-    print(f"First 5: {linear_values[:5]}")
-    print(f"Last 5: {linear_values[-5:]}")
-    
-    # Get power interpolation
-    power_values = interp.power(p=3)
-    print(f"\nPower interpolation (p=3, first 5 and last 5 values):")
-    print(f"First 5: {power_values[:5]}")
-    print(f"Last 5: {power_values[-5:]}")
-    
-    # Get exponential interpolation
-    exp_values = interp.exponential(b=2.0)
-    print(f"\nExponential interpolation (b=2.0, first 5 and last 5 values):")
-    print(f"First 5: {exp_values[:5]}")
-    print(f"Last 5: {exp_values[-5:]}")
-
-
-def example_2_unified_interface():
-    """Example 2: Using the unified interpolate() method"""
-    print("\n" + "=" * 60)
-    print("Example 2: Unified Interface")
-    print("=" * 60)
-    
-    interp = Interpolator(start=0.002, end=80.0, num_steps=20)
-    
-    # Use unified interface
-    methods = ["linear", "power", "exponential", "rho"]
-    for method in methods:
-        values = interp.interpolate(method=method, p=3, rho=7)
-        print(f"\n{method.capitalize()} interpolation:")
-        print(f"  Shape: {values.shape}")
-        print(f"  First value: {values[0]:.4f}")
-        print(f"  Last value: {values[-1]:.4f}")
-
-
-def example_3_convenience_function():
-    """Example 3: Using the convenience function"""
-    print("\n" + "=" * 60)
-    print("Example 3: Convenience Function")
-    print("=" * 60)
-    
-    # Quick interpolation without creating a class instance
-    values = interpolate(start=0, end=100, num_steps=5, method="linear")
-    print(f"\nLinear interpolation from 0 to 100 in 5 steps:")
-    print(values)
-
-
-def example_4_all_methods():
-    """Example 4: Get all methods at once"""
-    print("\n" + "=" * 60)
-    print("Example 4: Get All Methods")
-    print("=" * 60)
-    
-    interp = Interpolator(start=0.002, end=80.0, num_steps=50)
-    all_results = interp.get_all_methods(p=3, rho=7)
-    
-    print("\nAll interpolation methods:")
-    for method, values in all_results.items():
-        print(f"  {method}: shape={values.shape}, "
-              f"range=[{values.min():.4f}, {values.max():.4f}]")
-
-
-def example_5_visualization():
-    """Example 5: Visual comparison of different methods"""
-    print("\n" + "=" * 60)
-    print("Example 5: Visual Comparison")
+    print("Example 1: Linear Interpolation")
     print("=" * 60)
     print("Generating plot...")
     
-    # Original parameters from the notebook
-    interp = Interpolator(
-        start=0.002,
-        end=80.0,
-        num_steps=180,
-        dtype=torch.float64
-    )
+    # Create an interpolator instance
+    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
     
-    # Get all interpolation methods
-    t_steps_linear = interp.linear()
-    t_steps_power = interp.power(p=3)
-    t_steps_exp = interp.exponential(b=180 * 0.16)
-    t_steps_rho = interp.rho(rho=7, include_zero=False)
+    # Get linear interpolation
+    linear_values = interp.linear()
     
-    # Plot comparison
+    # Plot
+    plt.figure(figsize=(10, 6))
+    plt.plot(linear_values.numpy(), label='Linear', linewidth=2, marker='o', markersize=4)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Linear Interpolation (start=0.0, end=100.0, num_steps=50)', fontsize=14)
+    plt.legend(fontsize=11)
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('linear_interpolation.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'linear_interpolation.png'")
+    plt.close()
+
+
+def example_power_multiple_params():
+    """Example 2: Power interpolation with multiple parameter values"""
+    print("\n" + "=" * 60)
+    print("Example 2: Power Interpolation with Multiple Parameters")
+    print("=" * 60)
+    print("Generating plot...")
+    
+    # Create an interpolator instance with fixed start and end
+    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
+    
+    # Test different power values (including negative)
+    p_values = [-2, -1, 1, 2, 3, 5]
+    
+    # Plot
     plt.figure(figsize=(12, 7))
     
+    # Linear scale plot
     plt.subplot(2, 1, 1)
-    plt.plot(t_steps_linear.numpy(), label='Linear', linewidth=2)
-    plt.plot(t_steps_power.numpy(), label='Power (p=3)', linewidth=2)
-    plt.plot(t_steps_exp.numpy(), label='Exponential (b=28.8)', linewidth=2)
-    plt.plot(t_steps_rho.numpy(), label='Rho (ρ=7)', linewidth=2)
-    plt.xlabel('Step Index')
-    plt.ylabel('Value')
-    plt.title('Comparison of Interpolation Methods')
-    plt.legend()
+    for p in p_values:
+        power_values = interp.power(p=p)
+        plt.plot(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Power Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
+    plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
     # Log scale plot for better visualization
     plt.subplot(2, 1, 2)
-    plt.semilogy(t_steps_linear.numpy(), label='Linear', linewidth=2)
-    plt.semilogy(t_steps_power.numpy(), label='Power (p=3)', linewidth=2)
-    plt.semilogy(t_steps_exp.numpy(), label='Exponential (b=28.8)', linewidth=2)
-    plt.semilogy(t_steps_rho.numpy(), label='Rho (ρ=7)', linewidth=2)
-    plt.xlabel('Step Index')
-    plt.ylabel('Value (Log Scale)')
-    plt.title('Comparison of Interpolation Methods (Log Scale)')
-    plt.legend()
+    for p in p_values:
+        power_values = interp.power(p=p)
+        plt.semilogy(power_values.numpy(), label=f'Power (p={p})', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value (Log Scale)', fontsize=12)
+    plt.title('Power Interpolation with Different Parameters (Log Scale)', fontsize=14)
+    plt.legend(fontsize=10)
     plt.grid(True, alpha=0.3)
     
     plt.tight_layout()
-    plt.savefig('interpolation_comparison.png', dpi=150, bbox_inches='tight')
-    print("Plot saved as 'interpolation_comparison.png'")
-    plt.show()
+    plt.savefig('power_interpolation_multiple_params.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'power_interpolation_multiple_params.png'")
+    plt.close()
 
 
-def example_6_parameter_effects():
-    """Example 6: Effect of different parameters"""
+def example_exponential_multiple_params():
+    """Example 3: Exponential interpolation with multiple parameter values"""
     print("\n" + "=" * 60)
-    print("Example 6: Parameter Effects")
+    print("Example 3: Exponential Interpolation with Multiple Parameters")
     print("=" * 60)
+    print("Generating plot...")
     
-    interp = Interpolator(start=0.0, end=1.0, num_steps=50)
+    # Create an interpolator instance with fixed start and end
+    interp = Interpolator(start=0.0, end=100.0, num_steps=50, dtype=torch.float64)
     
-    # Test different power values
-    print("\nPower interpolation with different p values:")
-    for p in [1, 2, 3, 5]:
-        values = interp.power(p=p)
-        print(f"  p={p}: mid-point value = {values[len(values)//2]:.4f}")
+    # Test different exponential rate values (including negative)
+    # Note: For exponential, negative b values might produce interesting results
+    b_values = [-10, -5, 5, 10, 20, 50]
     
-    # Test different exponential rates
-    print("\nExponential interpolation with different b values:")
-    for b in [5, 10, 20, 50]:
-        values = interp.exponential(b=b)
-        print(f"  b={b}: mid-point value = {values[len(values)//2]:.4f}")
+    # Plot
+    plt.figure(figsize=(12, 7))
     
-    # Test different rho values
-    print("\nRho interpolation with different rho values:")
-    for rho in [2, 5, 7, 10]:
-        values = interp.rho(rho=rho)
-        print(f"  rho={rho}: mid-point value = {values[len(values)//2]:.4f}")
+    # Linear scale plot
+    plt.subplot(2, 1, 1)
+    for b in b_values:
+        try:
+            exp_values = interp.exponential(b=b)
+            plt.plot(exp_values.numpy(), label=f'Exponential (b={b})', linewidth=2)
+        except Exception as e:
+            print(f"  Note: Skipped b={b} due to error: {e}")
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Exponential Interpolation with Different Parameters (start=0.0, end=100.0)', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3)
+    
+    # Log scale plot for better visualization
+    plt.subplot(2, 1, 2)
+    for b in b_values:
+        try:
+            exp_values = interp.exponential(b=b)
+            plt.semilogy(exp_values.numpy(), label=f'Exponential (b={b})', linewidth=2)
+        except Exception:
+            pass
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value (Log Scale)', fontsize=12)
+    plt.title('Exponential Interpolation with Different Parameters (Log Scale)', fontsize=14)
+    plt.legend(fontsize=10)
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('exponential_interpolation_multiple_params.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'exponential_interpolation_multiple_params.png'")
+    plt.close()
 
 
-def example_7_diffusion_model_scenario():
-    """Example 7: Real-world scenario - Diffusion model noise scheduling"""
+def example_all_methods_ascending():
+    """Example 4: Comparison of all three methods (start < end)"""
     print("\n" + "=" * 60)
-    print("Example 7: Diffusion Model Noise Scheduling")
+    print("Example 4: All Methods Comparison (Ascending: start < end)")
     print("=" * 60)
+    print("Generating plot...")
     
-    # Typical values for diffusion models
-    sigma_min = 0.002
-    sigma_max = 80.0
-    num_steps = 180
-    
+    # Create an interpolator instance (start < end)
     interp = Interpolator(
-        start=sigma_min,
-        end=sigma_max,
-        num_steps=num_steps
+        start=0.002,
+        end=80.0,
+        num_steps=100,
+        dtype=torch.float64
     )
     
-    # Get different scheduling schemes
-    schedules = {
-        'Linear': interp.linear(),
-        'Power': interp.power(p=3),
-        'Exponential': interp.exponential(b=num_steps * 0.16),
-        'Rho': interp.rho(rho=7, include_zero=False)
-    }
+    # Get interpolation results for each method (one setting each)
+    linear_values = interp.linear()
+    power_values = interp.power(p=3)
+    exp_values = interp.exponential(b=15)
     
-    print("\nNoise schedules for diffusion model:")
-    for name, schedule in schedules.items():
-        print(f"\n{name} schedule:")
-        print(f"  Steps: {len(schedule)}")
-        print(f"  Min: {schedule.min():.4f}")
-        print(f"  Max: {schedule.max():.4f}")
-        print(f"  First step size: {(schedule[1] - schedule[0]):.4f}")
-        print(f"  Last step size: {(schedule[-1] - schedule[-2]):.4f}")
+    # Plot comparison
+    plt.figure(figsize=(12, 7))
+    
+    # Linear scale plot
+    plt.subplot(2, 1, 1)
+    plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
+    plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
+    plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Comparison of All Interpolation Methods (start=0.002, end=80.0)', fontsize=14)
+    plt.legend(fontsize=11)
+    plt.grid(True, alpha=0.3)
+    
+    # Log scale plot for better visualization
+    plt.subplot(2, 1, 2)
+    plt.semilogy(linear_values.numpy(), label='Linear', linewidth=2)
+    plt.semilogy(power_values.numpy(), label='Power (p=3)', linewidth=2)
+    plt.semilogy(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value (Log Scale)', fontsize=12)
+    plt.title('Comparison of All Interpolation Methods (Log Scale)', fontsize=14)
+    plt.legend(fontsize=11)
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('all_methods_comparison_ascending.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'all_methods_comparison_ascending.png'")
+    plt.close()
+
+
+def example_all_methods_descending():
+    """Example 5: Comparison of all three methods (start > end)"""
+    print("\n" + "=" * 60)
+    print("Example 5: All Methods Comparison (Descending: start > end)")
+    print("=" * 60)
+    print("Generating plot...")
+    
+    # Create an interpolator instance (start > end)
+    interp = Interpolator(
+        start=80.0,
+        end=0.002,
+        num_steps=100,
+        dtype=torch.float64
+    )
+    
+    # Get interpolation results for each method (one setting each)
+    linear_values = interp.linear()
+    power_values = interp.power(p=3)
+    exp_values = interp.exponential(b=15)
+    
+    # Plot comparison
+    plt.figure(figsize=(12, 7))
+    
+    # Linear scale plot
+    plt.subplot(2, 1, 1)
+    plt.plot(linear_values.numpy(), label='Linear', linewidth=2)
+    plt.plot(power_values.numpy(), label='Power (p=3)', linewidth=2)
+    plt.plot(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value', fontsize=12)
+    plt.title('Comparison of All Interpolation Methods (start=80.0, end=0.002)', fontsize=14)
+    plt.legend(fontsize=11)
+    plt.grid(True, alpha=0.3)
+    
+    # Log scale plot for better visualization
+    plt.subplot(2, 1, 2)
+    plt.semilogy(linear_values.numpy(), label='Linear', linewidth=2)
+    plt.semilogy(power_values.numpy(), label='Power (p=3)', linewidth=2)
+    plt.semilogy(exp_values.numpy(), label='Exponential (b=15)', linewidth=2)
+    plt.xlabel('Step Index', fontsize=12)
+    plt.ylabel('Value (Log Scale)', fontsize=12)
+    plt.title('Comparison of All Interpolation Methods (Log Scale)', fontsize=14)
+    plt.legend(fontsize=11)
+    plt.grid(True, alpha=0.3)
+    
+    plt.tight_layout()
+    plt.savefig('all_methods_comparison_descending.png', dpi=150, bbox_inches='tight')
+    print("Plot saved as 'all_methods_comparison_descending.png'")
+    plt.close()
 
 
 if __name__ == "__main__":
@@ -205,25 +241,24 @@ if __name__ == "__main__":
     print("=" * 60)
     
     try:
-        example_1_basic_usage()
-        example_2_unified_interface()
-        example_3_convenience_function()
-        example_4_all_methods()
-        example_6_parameter_effects()
-        example_7_diffusion_model_scenario()
-        
-        # Visualization example (requires matplotlib)
-        try:
-            example_5_visualization()
-        except Exception as e:
-            print(f"\nNote: Visualization skipped ({e})")
+        example_linear()
+        example_power_multiple_params()
+        example_exponential_multiple_params()
+        example_all_methods_ascending()
+        example_all_methods_descending()
         
         print("\n" + "=" * 60)
         print("All examples completed successfully!")
+        print("=" * 60)
+        print("\nGenerated files:")
+        print("  - linear_interpolation.png")
+        print("  - power_interpolation_multiple_params.png")
+        print("  - exponential_interpolation_multiple_params.png")
+        print("  - all_methods_comparison_ascending.png")
+        print("  - all_methods_comparison_descending.png")
         print("=" * 60)
         
     except Exception as e:
         print(f"\nError: {e}")
         import traceback
         traceback.print_exc()
-
