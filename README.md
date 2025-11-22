@@ -95,7 +95,27 @@ rho = all_results['rho']
 
 ### Command-Line Interface
 
-The library includes a CLI tool for generating plots directly:
+The `interpolate.py` script provides a command-line interface for generating interpolation plots:
+
+```bash
+python interpolate.py --method METHOD --start START --end END --num-points N [OPTIONS]
+```
+
+**Required Arguments:**
+- `--method`: Interpolation method (`linear`, `power`, `exponential`, `rho`)
+- `--start`: Starting value for interpolation
+- `--end`: Ending value for interpolation
+- `--num-points`: Total number of output points
+
+**Optional Arguments:**
+- `--output`: Output filename (auto-generated if not provided)
+- `--p`: Power parameter for power method (default: 3)
+- `--b`: Exponential rate parameter for exponential method (default: auto-calculated)
+- `--rho`: Rho parameter for rho method (default: 7)
+- `--include-zero`: Include zero in rho method
+- `--dpi`: Resolution for output image (default: 150)
+
+**Examples:**
 
 ```bash
 # Linear interpolation
@@ -253,117 +273,6 @@ When start > end, all methods interpolate from the higher value to the lower val
 - Methods: Linear, Power (p=3), Exponential (b=15)
 
 ![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
-
-## API Reference
-
-### `Interpolator` Class
-
-#### Constructor
-
-```python
-Interpolator(start, end, num_points, dtype=torch.float64)
-```
-
-**Parameters:**
-- `start` (float): Starting value
-- `end` (float): Ending value
-- `num_points` (int): Total number of output points (including start, end, and all intermediate points, must be >= 1)
-- `dtype` (torch.dtype): Output tensor dtype (default: torch.float64)
-
-#### Methods
-
-- `linear() -> torch.Tensor`: Linear interpolation
-- `power(p=3) -> torch.Tensor`: Power-based interpolation
-- `exponential(b=None) -> torch.Tensor`: Exponential interpolation
-- `rho(rho=7, include_zero=False) -> torch.Tensor`: Rho-based interpolation
-- `interpolate(method, **kwargs) -> torch.Tensor`: Unified interface
-- `get_all_methods(**kwargs) -> dict`: Get all methods at once
-
-### `interpolate()` Function
-
-```python
-interpolate(start, end, num_points, method="linear", dtype=torch.float64, **kwargs) -> torch.Tensor
-```
-
-Convenience function for quick interpolation without creating a class instance.
-
-### `plot_interpolation()` Function
-
-```python
-from plotting import plot_interpolation
-
-plot_interpolation(
-    values=torch.Tensor,
-    method=str,
-    start=float,
-    end=float,
-    num_points=int,
-    output_path=str,
-    title=None,
-    figsize=(10, 6),
-    dpi=150,
-    **kwargs
-)
-```
-
-Generate and save a plot for interpolation results.
-
-### `plot_multiple_methods()` Function
-
-```python
-from plotting import plot_multiple_methods
-
-plot_multiple_methods(
-    results=Dict[str, torch.Tensor],
-    start=float,
-    end=float,
-    num_points=int,
-    output_path=str,
-    title=None,
-    figsize=(10, 6),
-    dpi=150
-)
-```
-
-Generate and save a comparison plot for multiple interpolation methods.
-
-## Command-Line Interface
-
-The `interpolate.py` script provides a command-line interface for generating interpolation plots:
-
-```bash
-python interpolate.py --method METHOD --start START --end END --num-points N [OPTIONS]
-```
-
-**Required Arguments:**
-- `--method`: Interpolation method (`linear`, `power`, `exponential`, `rho`)
-- `--start`: Starting value for interpolation
-- `--end`: Ending value for interpolation
-- `--num-points`: Total number of output points
-
-**Optional Arguments:**
-- `--output`: Output filename (auto-generated if not provided)
-- `--p`: Power parameter for power method (default: 3)
-- `--b`: Exponential rate parameter for exponential method (default: auto-calculated)
-- `--rho`: Rho parameter for rho method (default: 7)
-- `--include-zero`: Include zero in rho method
-- `--dpi`: Resolution for output image (default: 150)
-
-**Examples:**
-
-```bash
-# Linear interpolation
-python interpolate.py --method linear --start 0.0 --end 100.0 --num-points 50
-
-# Power interpolation with custom parameter
-python interpolate.py --method power --start 0.0 --end 100.0 --num-points 50 --p 5
-
-# Exponential interpolation
-python interpolate.py --method exponential --start 0.0 --end 100.0 --num-points 50 --b 15
-
-# Rho interpolation
-python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
-```
 
 ## Requirements
 
