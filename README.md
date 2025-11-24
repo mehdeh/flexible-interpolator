@@ -168,16 +168,17 @@ values = interp.power(p=3)
 
 For output length $n$ (num_points) and power parameter $p$:
 
-$$t_i = \text{start} + (\text{end} - \text{start}) \cdot \left(1 - \left|\frac{i}{n-1} - 1\right|\right)^p$$
+$$t_i = \text{start} + (\text{end} - \text{start}) \cdot \left(\frac{i}{n-1}\right)^p$$
 
 where $i \in \{0, 1, 2, \ldots, n-1\}$ and $n > 1$. When $n = 1$, $t_0 = \text{start}$.
 
-This formula creates a symmetric curve that concentrates more points near the start and end boundaries, with fewer points in the middle region.
+This formula creates a non-linear curve where the distribution depends on the power parameter $p$.
 
 **Parameters:**
 - `p` (float): Power parameter controlling curve shape
-  - Higher `p`: More concentration at ends
-  - Lower `p`: More uniform distribution
+  - Higher `p` (p > 1): More concentration at start
+  - Lower `p` (0 < p < 1): More concentration at end
+  - `p = 1`: Linear interpolation
   - Must be positive
 
 **Use Cases:**

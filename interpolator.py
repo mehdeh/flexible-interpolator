@@ -96,12 +96,13 @@ class Interpolator:
         Generate power-based interpolated points.
         
         This method creates a non-linear interpolation where the distribution
-        concentrates more points near the ends depending on p.
+        depends on the power parameter p.
         
         Args:
             p: Power parameter controlling the curve shape (default: 3)
-                - Higher p: More concentration at ends
-                - Lower p: More uniform distribution
+                - Higher p (p > 1): More concentration at start
+                - Lower p (0 < p < 1): More concentration at end
+                - p = 1: Linear interpolation
                 Must be positive
         
         Returns:
@@ -116,9 +117,11 @@ class Interpolator:
         
         normalized = self._normalize_indices()
         
-        # Power interpolation formula that concentrates points at the ends
-        # When normalized=0 or 1, power_term=1; when normalized=0.5, power_term=0.5^p
-        power_term = (1 - torch.abs(normalized - 1)) ** p
+        # Power interpolation formula: (i/(n-1))^p
+        # When p > 1: concentrates more points near the start
+        # When p < 1: concentrates more points near the end
+        # When p = 1: linear interpolation
+        power_term = normalized ** p
         
         return self._map_to_range(power_term)
     
