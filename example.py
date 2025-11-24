@@ -144,14 +144,45 @@ def example_rho_multiple_params():
     plt.close()
 
 
-def example_all_methods_ascending():
-    """Example 5: Comparison of all four methods (start < end)"""
+def example_geometric():
+    """Example 5: Geometric interpolation"""
     print("\n" + "=" * 60)
-    print("Example 5: All Methods Comparison (Ascending: start < end)")
+    print("Example 5: Geometric Interpolation")
     print("=" * 60)
     print("Generating plot...")
     
-    # Create an interpolator instance (start < end)
+    # Create an interpolator instance
+    interp = Interpolator(start=0.0, end=100.0, num_points=50, dtype=torch.float64)
+    
+    # Get geometric interpolation (note: start must be non-zero)
+    try:
+        # This will fail because start=0, so let's use a different example
+        interp = Interpolator(start=1.0, end=100.0, num_points=50, dtype=torch.float64)
+        geometric_values = interp.geometric()
+        
+        # Plot using plotting module
+        output_path = os.path.join(OUTPUT_DIR, 'geometric_interpolation.png')
+        plot_interpolation(
+            values=geometric_values,
+            method="geometric",
+            start=1.0,
+            end=100.0,
+            num_points=50,
+            output_path=output_path
+        )
+        print(f"Plot saved as '{output_path}'")
+    except Exception as e:
+        print(f"  Error: {e}")
+
+
+def example_all_methods_ascending():
+    """Example 6: Comparison of all five methods (start < end)"""
+    print("\n" + "=" * 60)
+    print("Example 6: All Methods Comparison (Ascending: start < end)")
+    print("=" * 60)
+    print("Generating plot...")
+    
+    # Create an interpolator instance (start < end, and start must be non-zero for geometric)
     interp = Interpolator(
         start=20.0,
         end=80.0,
@@ -164,13 +195,15 @@ def example_all_methods_ascending():
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
     rho_values = interp.rho(rho=7, include_zero=False)
+    geometric_values = interp.geometric()
     
     # Plot comparison using plotting module
     results = {
         "linear": linear_values,
         "power (p=3)": power_values,
         "exponential (b=15)": exp_values,
-        "rho (rho=7)": rho_values
+        "rho (rho=7)": rho_values,
+        "geometric": geometric_values
     }
     output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')
     plot_multiple_methods(
@@ -184,13 +217,13 @@ def example_all_methods_ascending():
 
 
 def example_all_methods_descending():
-    """Example 6: Comparison of all four methods (start > end)"""
+    """Example 7: Comparison of all five methods (start > end)"""
     print("\n" + "=" * 60)
-    print("Example 6: All Methods Comparison (Descending: start > end)")
+    print("Example 7: All Methods Comparison (Descending: start > end)")
     print("=" * 60)
     print("Generating plot...")
     
-    # Create an interpolator instance (start > end)
+    # Create an interpolator instance (start > end, and start must be non-zero for geometric)
     interp = Interpolator(
         start=80.0,
         end=20.0,
@@ -203,13 +236,15 @@ def example_all_methods_descending():
     power_values = interp.power(p=3)
     exp_values = interp.exponential(b=15)
     rho_values = interp.rho(rho=7, include_zero=False)
+    geometric_values = interp.geometric()
     
     # Plot comparison using plotting module
     results = {
         "linear": linear_values,
         "power (p=3)": power_values,
         "exponential (b=15)": exp_values,
-        "rho (rho=7)": rho_values
+        "rho (rho=7)": rho_values,
+        "geometric": geometric_values
     }
     output_path = os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')
     plot_multiple_methods(
@@ -233,6 +268,7 @@ if __name__ == "__main__":
         example_power_multiple_params()
         example_exponential_multiple_params()
         example_rho_multiple_params()
+        example_geometric()
         example_all_methods_ascending()
         example_all_methods_descending()
         
@@ -244,6 +280,7 @@ if __name__ == "__main__":
         print(f"  - {os.path.join(OUTPUT_DIR, 'power_interpolation_multiple_params.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'exponential_interpolation_multiple_params.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'rho_interpolation_multiple_params.png')}")
+        print(f"  - {os.path.join(OUTPUT_DIR, 'geometric_interpolation.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_ascending.png')}")
         print(f"  - {os.path.join(OUTPUT_DIR, 'all_methods_comparison_descending.png')}")
         print("=" * 60)

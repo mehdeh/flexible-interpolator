@@ -8,7 +8,7 @@ This code is provided freely for public use without any license restrictions.
 
 ## Features
 
-- 🎯 **Multiple Interpolation Methods**: Linear, Power-based, Exponential, and Rho-based
+- 🎯 **Multiple Interpolation Methods**: Linear, Power-based, Exponential, Rho-based, and Geometric
 - 🚀 **Easy to Use**: Simple API with both class-based and function-based interfaces
 - 🔧 **Flexible**: Adjustable parameters for fine-tuning each method
 - 📊 **Visualization Support**: Built-in plotting capabilities and CLI tool
@@ -69,6 +69,7 @@ linear = interp.interpolate("linear")
 power = interp.interpolate("power", p=3)
 exponential = interp.interpolate("exponential", b=28.8)
 rho = interp.interpolate("rho", rho=7, include_zero=False)
+geometric = interp.interpolate("geometric")
 ```
 
 ### Convenience Function
@@ -91,6 +92,7 @@ linear = all_results['linear']
 power = all_results['power']
 exponential = all_results['exponential']
 rho = all_results['rho']
+geometric = all_results['geometric']
 ```
 
 ### Command-Line Interface
@@ -102,7 +104,7 @@ python interpolate.py --method METHOD --start START --end END --num-points N [OP
 ```
 
 **Required Arguments:**
-- `--method`: Interpolation method (`linear`, `power`, `exponential`, `rho`)
+- `--method`: Interpolation method (`linear`, `power`, `exponential`, `rho`, `geometric`)
 - `--start`: Starting value for interpolation
 - `--end`: Ending value for interpolation
 - `--num-points`: Total number of output points
@@ -129,6 +131,9 @@ python interpolate.py --method exponential --start 0.0 --end 100.0 --num-points 
 
 # Rho interpolation
 python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
+
+# Geometric interpolation
+python interpolate.py --method geometric --start 0.0 --end 100.0 --num-points 50
 ```
 
 ## Interpolation Methods
@@ -251,6 +256,42 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 
 ![Rho Interpolation](docs/rho_interpolation_multiple_params.png)
 
+### 5. Geometric Interpolation
+
+Geometric progression-based interpolation using exponential scaling.
+
+```python
+values = interp.geometric()
+```
+
+**Mathematical Formula:**
+
+For output length $n$ (num_points), the interpolated values are:
+
+$$t_i = \text{start} \cdot \left(\frac{\text{end}}{\text{start}}\right)^{\frac{i}{n-1}}$$
+
+where $i \in \{0, 1, 2, \ldots, n-1\}$ and $n > 1$. When $n = 1$, $t_0 = \text{start}$.
+
+This formula creates a geometric progression where:
+- When $i = 0$: $t_0 = \text{start} \cdot \left(\frac{\text{end}}{\text{start}}\right)^0 = \text{start}$
+- When $i = n-1$: $t_{n-1} = \text{start} \cdot \left(\frac{\text{end}}{\text{start}}\right)^1 = \text{end}$
+
+**Constraints:**
+- `start` must be non-zero (division by zero)
+- `start` and `end` must have the same sign (both positive or both negative)
+
+**Characteristics:**
+- Exponential scaling based on the ratio end/start
+- More concentration at start when end/start > 1
+- More concentration at end when end/start < 1
+- Constant ratio between consecutive values
+
+**Use Cases:**
+- Geometric sequences and progressions
+- Exponential growth/decay modeling
+- Multiplicative scaling scenarios
+- When you need constant ratio between steps
+
 ## Comparison
 
 ### All Methods Comparison (Ascending)
@@ -261,7 +302,7 @@ When start < end, all methods interpolate from the lower value to the higher val
 - Start: 20.0
 - End: 80.0
 - Number of points: 50
-- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7)
+- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7), Geometric
 
 ![All Methods Comparison - Ascending](docs/all_methods_comparison_ascending.png)
 
@@ -273,7 +314,7 @@ When start > end, all methods interpolate from the higher value to the lower val
 - Start: 80.0
 - End: 20.0
 - Number of points: 50
-- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7)
+- Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7), Geometric
 
 ![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
 

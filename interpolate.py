@@ -99,6 +99,9 @@ Examples:
   
   # Rho interpolation
   python interpolate.py --method rho --start 0.002 --end 80.0 --num-points 180 --rho 7
+  
+  # Geometric interpolation
+  python interpolate.py --method geometric --start 0.0 --end 100.0 --num-points 50
         """
     )
     
@@ -106,7 +109,7 @@ Examples:
     parser.add_argument(
         "--method",
         type=str,
-        choices=["linear", "power", "exponential", "rho"],
+        choices=["linear", "power", "exponential", "rho", "geometric"],
         required=True,
         help="Interpolation method to use"
     )
@@ -202,6 +205,12 @@ def validate_arguments(args: argparse.Namespace) -> None:
         if args.include_zero and (args.start < 0 or args.end < 0):
             raise ValueError("--include-zero requires both start and end to be non-negative")
     
+    if args.method == "geometric":
+        if args.start == 0:
+            raise ValueError("--start must be non-zero for geometric method")
+        if (args.start > 0 and args.end < 0) or (args.start < 0 and args.end > 0):
+            raise ValueError("--start and --end must have the same sign for geometric method")
+    
     # Warn about unused parameters
     if args.method != "power" and args.p is not None:
         print(f"Warning: --p parameter is ignored for {args.method} method", file=sys.stderr)
@@ -214,6 +223,10 @@ def validate_arguments(args: argparse.Namespace) -> None:
             print(f"Warning: --rho parameter is ignored for {args.method} method", file=sys.stderr)
         if args.include_zero:
             print(f"Warning: --include-zero parameter is ignored for {args.method} method", file=sys.stderr)
+    
+    if args.method != "geometric" and args.start == 0:
+        # This is just a warning, not an error, since other methods can handle start=0
+        pass
 
 
 def build_method_kwargs(args: argparse.Namespace) -> Dict[str, Any]:

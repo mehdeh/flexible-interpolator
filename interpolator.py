@@ -1,7 +1,7 @@
 """
 A flexible interpolation library for generating intermediate points between start and end values.
 
-This module provides multiple interpolation methods including linear, power, exponential, and rho-based schemes.
+This module provides multiple interpolation methods including linear, power, exponential, rho-based, and geometric schemes.
 """
 
 import torch
@@ -26,6 +26,7 @@ class Interpolator:
         power(p: float = 3): Power-based interpolation with adjustable exponent
         exponential(b: Optional[float] = None): Exponential interpolation with adjustable rate
         rho(rho: float = 7, include_zero: bool = False): Rho-based interpolation
+        geometric(): Geometric interpolation using exponential scaling
         get_all_methods(): Get results from all interpolation methods
     """
     
@@ -213,9 +214,46 @@ class Interpolator:
         
         return t_steps
     
+    def geometric(self) -> torch.Tensor:
+        """
+        Generate geometrically interpolated points.
+        
+        This method creates a geometric progression from start to end,
+        where values scale exponentially based on the ratio end/start.
+        
+        Returns:
+            torch.Tensor: Tensor of shape (num_points,) containing interpolated values
+                         First value is start, last value is end
+        
+        Raises:
+            ValueError: If start is zero (division by zero)
+            ValueError: If start and end have opposite signs (would require complex numbers)
+        """
+        if self.num_points == 1:
+            return torch.tensor([self.start], dtype=self.dtype)
+        
+        if self.start == 0:
+            raise ValueError(
+                "Geometric interpolation requires start != 0 (division by zero)"
+            )
+        
+        if (self.start > 0 and self.end < 0) or (self.start < 0 and self.end > 0):
+            raise ValueError(
+                "Geometric interpolation requires start and end to have the same sign "
+                "(both positive or both negative)"
+            )
+        
+        normalized = self._normalize_indices()
+        
+        # Geometric interpolation formula: t_i = start * (end/start) ^ (i/(N-1))
+        ratio = self.end / self.start
+        t_steps = self.start * (ratio ** normalized)
+        
+        return t_steps
+    
     def interpolate(
         self,
-        method: Literal["linear", "power", "exponential", "rho"] = "linear",
+        method: Literal["linear", "power", "exponential", "rho", "geometric"] = "linear",
         **kwargs
     ) -> torch.Tensor:
         """
@@ -227,10 +265,12 @@ class Interpolator:
                 - "power": Power-based interpolation (optional 'p' parameter)
                 - "exponential": Exponential interpolation (optional 'b' parameter)
                 - "rho": Rho-based interpolation (optional 'rho' and 'include_zero' parameters)
+                - "geometric": Geometric interpolation using exponential scaling
             **kwargs: Additional parameters for specific methods
                 - For power: p (default: 3)
                 - For exponential: b (default: (num_points - 1) * 0.16)
                 - For rho: rho (default: 7), include_zero (default: False)
+                - Geometric method has no additional parameters
         
         Returns:
             torch.Tensor: Tensor containing interpolated values
@@ -242,6 +282,7 @@ class Interpolator:
             >>> interp = Interpolator(0.002, 80, 180)
             >>> linear_values = interp.interpolate("linear")
             >>> power_values = interp.interpolate("power", p=3)
+            >>> geometric_values = interp.interpolate("geometric")
         """
         method = method.lower()
         
@@ -253,6 +294,7 @@ class Interpolator:
                 rho=kwargs.get("rho", 7),
                 include_zero=kwargs.get("include_zero", False)
             ),
+            "geometric": lambda: self.geometric(),
         }
         
         if method not in method_map:
@@ -276,7 +318,7 @@ class Interpolator:
         
         Returns:
             dict: Dictionary containing results for each method
-                Keys: 'linear', 'power', 'exponential', 'rho'
+                Keys: 'linear', 'power', 'exponential', 'rho', 'geometric'
         """
         return {
             "linear": self.linear(),
@@ -286,6 +328,7 @@ class Interpolator:
                 rho=kwargs.get("rho", 7),
                 include_zero=kwargs.get("include_zero", False)
             ),
+            "geometric": self.geometric(),
         }
 
 
@@ -293,7 +336,7 @@ def interpolate(
     start: float,
     end: float,
     num_points: int,
-    method: Literal["linear", "power", "exponential", "rho"] = "linear",
+    method: Literal["linear", "power", "exponential", "rho", "geometric"] = "linear",
     dtype: torch.dtype = torch.float64,
     **kwargs
 ) -> torch.Tensor:
