@@ -161,7 +161,7 @@ where $i \in \{0, 1, 2, \ldots, n-1\}$ and $n > 1$. When $n = 1$, $t_0 = \text{s
 - Equal step sizes
 - Straight line from start to end
 
-![Linear Interpolation](docs/linear_interpolation.png)
+<img src="docs/linear_interpolation.png" alt="Linear Interpolation" width="30%">
 
 ### 2. Power-based Interpolation
 
@@ -192,7 +192,7 @@ This formula creates a non-linear curve where the distribution depends on the po
 - When you need more samples near start/end
 - Non-uniform sampling strategies
 
-![Power Interpolation](docs/power_interpolation_multiple_params.png)
+<img src="docs/power_interpolation_multiple_params.png" alt="Power Interpolation" width="30%">
 
 ### 3. Exponential Interpolation
 
@@ -225,7 +225,7 @@ This formula creates an exponential decay that concentrates more points near the
 - Learning rate scheduling
 - Annealing schedules
 
-![Exponential Interpolation](docs/exponential_interpolation_multiple_params.png)
+<img src="docs/exponential_interpolation_multiple_params.png" alt="Exponential Interpolation" width="30%">
 
 ### 4. Rho-based Interpolation
 
@@ -256,7 +256,7 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 - Score-based generative models
 - Advanced scheduling strategies
 
-![Rho Interpolation](docs/rho_interpolation_multiple_params.png)
+<img src="docs/rho_interpolation_multiple_params.png" alt="Rho Interpolation" width="30%">
 
 ### 5. Geometric Interpolation
 
@@ -294,6 +294,8 @@ This formula creates a geometric progression where:
 - Multiplicative scaling scenarios
 - When you need constant ratio between steps
 
+<img src="docs/geometric_interpolation.png" alt="Geometric Interpolation" width="30%">
+
 ## Comparison
 
 ### All Methods Comparison (Ascending)
@@ -306,7 +308,7 @@ When start < end, all methods interpolate from the lower value to the higher val
 - Number of points: 50
 - Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7), Geometric
 
-![All Methods Comparison - Ascending](docs/all_methods_comparison_ascending.png)
+<img src="docs/all_methods_comparison_ascending.png" alt="All Methods Comparison - Ascending" width="30%">
 
 ### All Methods Comparison (Descending)
 
@@ -318,7 +320,7 @@ When start > end, all methods interpolate from the higher value to the lower val
 - Number of points: 50
 - Methods: Linear, Power (p=3), Exponential (b=15), Rho (rho=7), Geometric
 
-![All Methods Comparison - Descending](docs/all_methods_comparison_descending.png)
+<img src="docs/all_methods_comparison_descending.png" alt="All Methods Comparison - Descending" width="30%">
 
 ## Requirements
 
@@ -351,6 +353,7 @@ flexible-interpolator/
 │   ├── power_interpolation_multiple_params.png
 │   ├── exponential_interpolation_multiple_params.png
 │   ├── rho_interpolation_multiple_params.png
+│   ├── geometric_interpolation.png
 │   ├── all_methods_comparison_ascending.png
 │   └── all_methods_comparison_descending.png
 └── outputs/            # Generated output files (gitignored)
