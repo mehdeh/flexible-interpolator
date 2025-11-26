@@ -4,6 +4,8 @@
 
 A flexible Python library for generating intermediate points between start and end values using various interpolation methods. Perfect for noise scheduling in diffusion models, parameter tuning, and any scenario requiring non-linear interpolation schemes.
 
+These interpolation methods are widely used in diffusion models, score-based generative models, and consistency models for noise scheduling and time step generation. The Rho-based interpolation method was first introduced in the EDM paper by Karras et al., while Geometric interpolation has been used in score-based SDE formulations. While these methods find extensive application in generative modeling, they are also valuable tools for many other domains requiring non-linear interpolation.
+
 This code is provided freely for public use without any license restrictions.
 
 ## Features
@@ -227,7 +229,7 @@ This formula creates an exponential decay that concentrates more points near the
 
 ### 4. Rho-based Interpolation
 
-Power transformation-based interpolation commonly used in diffusion models.
+Power transformation-based interpolation commonly used in diffusion models. This method was first introduced by Karras et al. in their EDM paper [[1]](#references) (Equation 5) and has since been widely adopted in consistency models and other diffusion-based generative models [[3]](#references), [[4]](#references), [[5]](#references).
 
 ```python
 values = interp.rho(rho=7, include_zero=False)
@@ -258,7 +260,7 @@ If `include_zero=True`, then $t_{n-1} = 0$ (the last point is replaced with zero
 
 ### 5. Geometric Interpolation
 
-Geometric progression-based interpolation using exponential scaling.
+Geometric progression-based interpolation using exponential scaling. This method has been used in score-based generative modeling through stochastic differential equations [[2]](#references) (Equation 30).
 
 ```python
 values = interp.geometric()
@@ -365,6 +367,18 @@ This code is provided freely for public use without any license restrictions. Us
 ## Acknowledgments
 
 This library was inspired by interpolation schemes commonly used in diffusion models and score-based generative models.
+
+## References
+
+1. Karras, T., Aittala, M., Aila, T., & Laine, S. (2022). Elucidating the Design Space of Diffusion-Based Generative Models. *Advances in Neural Information Processing Systems*, 35. https://arxiv.org/abs/2206.00364
+
+2. Song, Y., Sohl-Dickstein, J., Kingma, D. P., Kumar, A., Ermon, S., & Poole, B. (2021). Score-Based Generative Modeling through Stochastic Differential Equations. *International Conference on Learning Representations*. https://arxiv.org/abs/2011.13456
+
+3. Song, Y., Dhariwal, P., Chen, M., & Sutskever, I. (2023). Consistency Models. https://arxiv.org/abs/2303.01469
+
+4. Song, Y., Dhariwal, P., Chen, M., & Sutskever, I. (2023). Improved Techniques for Training Consistency Models. https://arxiv.org/abs/2310.14189
+
+5. Luo, S., Tan, Y., Huang, L., Li, J., & Zhao, H. (2025). Improved Training Technique for Latent Consistency Models. https://arxiv.org/abs/2502.01441
 
 ## Support
 
